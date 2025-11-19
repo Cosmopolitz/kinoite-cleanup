@@ -13,10 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install RPM tooling
+    - name: Install RPM tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y rpm rpmdevtools make
+        sudo apt-get install -y rpm
 
     - name: Prepare rpmbuild tree
       run: |
@@ -24,7 +24,7 @@ jobs:
         cp SOURCES/*.tar.gz rpmbuild/SOURCES/
         cp SPECS/*.spec rpmbuild/SPECS/
 
-    - name: Build RPM
+    - name: Build the package
       run: |
         rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/*.spec
 
@@ -32,4 +32,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: rpm-packages
-        path: rpmbuild/RPMS/**/*.rpm
+        path: |
+          rpmbuild/RPMS/**/*.rpm
+          rpmbuild/SRPMS/**/*.src.rpm
