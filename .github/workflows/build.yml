@@ -32,7 +32,7 @@ jobs:
           rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/*.spec
 
       - name: Upload RPM artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rpm-packages
           path: rpmbuild/RPMS/**/*.rpm
