@@ -27,7 +27,7 @@ jobs:
 
     - name: Build RPM
       run: |
-        rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/*.spec
+        rpmbuild --define "_topdir $PWD" -ba SPECS/*.spec
 
     - name: Upload built RPMs
       uses: actions/upload-artifact@v4
