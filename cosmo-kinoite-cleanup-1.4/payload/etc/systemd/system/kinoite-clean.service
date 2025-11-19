@@ -1,0 +1,13 @@
+[Unit]
+Description=Run rpm-ostree cleanup
+Wants=kinoite-clean.timer
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/kinoite-clean.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Run extended system cleanup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/system-clean.sh
+StandardOutput=append:/var/log/system-clean.log
+StandardError=append:/var/log/system-clean.log
+
+[Install]
+WantedBy=multi-user.target

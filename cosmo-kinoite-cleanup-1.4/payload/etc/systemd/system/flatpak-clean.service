@@ -1,0 +1,13 @@
+[Unit]
+Description=Run Flatpak cleanup
+Wants=flatpak-clean.timer
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak-clean.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+
+[Install]
+WantedBy=multi-user.target
