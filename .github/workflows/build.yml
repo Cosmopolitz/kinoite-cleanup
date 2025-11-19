@@ -1,4 +1,4 @@
-name: Build RPM
+name: Build RPM Package
 
 on:
   push:
@@ -11,26 +11,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-    - name: Install RPM tools
-      run: |
-        sudo apt update
-        sudo apt install -y rpm dpkg-dev rpm2cpio cpio createrepo-c
+      - name: Install rpm-build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm rpm2cpio cpio make wget
+          sudo apt-get install -y ruby ruby-dev
+          sudo gem install fpm
 
-    - name: Prepare build directory
-      run: |
-        mkdir -p rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-        cp -r SOURCES/* rpmbuild/SOURCES/ || true
-        cp SPECS/*.spec rpmbuild/SPECS/
+      - name: Prepare rpmbuild tree
+        run: |
+          mkdir -p rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+          cp SOURCES/*.tar.gz rpmbuild/SOURCES/
+          cp SPECS/*.spec rpmbuild/SPECS/
 
-    - name: Build RPM
-      run: |
-        rpmbuild --define "_topdir $PWD" -ba SPECS/*.spec
+      - name: Build RPM
+        run: |
+          rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/*.spec
 
-    - name: Upload built RPMs
-      uses: actions/upload-artifact@v4
-      with:
-        name: rpm-packages
-        path: rpmbuild/RPMS/
+      - name: Upload RPM artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: rpm-packages
+          path: rpmbuild/RPMS/**/*.rpm
