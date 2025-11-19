@@ -1,0 +1,43 @@
+name: Build RPM
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Fedora build environment
+        uses: fedora-cloud/setup-fedora@v1
+        with:
+          release: 39
+
+      - name: Install build tools
+        run: sudo dnf install -y rpm-build createrepo_c tar
+
+      - name: Prepare source tarball
+        run: |
+          tar -czf kinoite-cleanup-cosmo-1.4.tar.gz cosmo-kinoite-cleanup-1.4
+
+      - name: Move sources
+        run: |
+          mkdir -p ~/rpmbuild/SOURCES ~/rpmbuild/SPECS
+          cp kinoite-cleanup-cosmo-1.4.tar.gz ~/rpmbuild/SOURCES/
+          cp fedora-kinoite-cleanup.spec ~/rpmbuild/SPECS/
+
+      - name: Build RPM
+        run: rpmbuild -ba ~/rpmbuild/SPECS/fedora-kinoite-cleanup.spec
+
+      - name: Upload RPM artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: rpm-packages
+          path: |
+            ~/rpmbuild/RPMS/**/*.rpm
+            ~/rpmbuild/SRPMS/**/*.src.rpm
